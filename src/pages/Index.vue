@@ -1,11 +1,15 @@
 <template>
-  <q-page class="flex flex-center">
-    <img alt="Quasar logo" src="~assets/quasar-logo-full.svg">
+  <q-page>
+    <GMap />
   </q-page>
 </template>
 
 <script>
+import GMap from '../components/GMap/GMap.vue'
 export default {
-  name: 'PageIndex'
+  name: 'PageIndex',
+  components: {
+    GMap
+  }
 }
 </script>

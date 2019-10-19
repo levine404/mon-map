@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" class="full-height">
     <q-header elevated>
       <q-toolbar class="taskbar-color">
         <div>
@@ -45,8 +45,10 @@
       </q-toolbar>
     </q-header>
 
-    <q-page-container>
-      <router-view />
+    <q-page-container class="full-height">
+      <keep-alive>
+        <router-view />
+      </keep-alive>
     </q-page-container>
 
     <q-dialog

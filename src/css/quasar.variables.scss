@@ -26,3 +26,25 @@ $taskbar-color: rgb(89, 111, 133);
 $frame-inner-border-color: rgb(155, 135, 118);;
 $frame-outter-border-color: rgb(102, 85, 70);
 $frame-color: gold;
+
+// Map style
+$map-color: transparent;
+$road-color: rgb(163, 149, 123);
+$road-border-color: rgb(155, 84, 84);
+$label-text-color: #ffffff;
+$label-text-border-color: #575449;
+$item-label-color: #333;
+$item-label-size: 16px;
+
+:export {
+  mapColor: $map-color;
+  roadColor: $road-color;
+  roadBorderColor: $road-border-color;
+  labelTextColor: $label-text-color;
+  labelTextBorderColor: $label-text-border-color;
+  itemLabelColor: $item-label-color;
+  itemLabelSize: $item-label-size;
+}
+
+
+
