@@ -10,6 +10,6 @@ const firebaseConfig = {
   appId: '1:934299174260:web:34fb40dff808b5c0c89821'
 }
 
-export default ({ Vue }) => {
-  Vue.prototype.$firebase = firebase.initializeApp(firebaseConfig)
+export default () => {
+  firebase.initializeApp(firebaseConfig)
 }
