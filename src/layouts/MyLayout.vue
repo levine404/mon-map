@@ -20,7 +20,11 @@
           <div class="custom-frame">
             <div class="custom-frame-wrapper">
               <div class="custom-frame-gradient">
-                Monastery Mapper
+                <div class="custom-frame-title">
+                  Monastery
+                  <br />
+                  Mapper
+                </div>
                 <div
                   v-if="loggedUser"
                   class="custom-frame-admin-icon"
@@ -175,6 +179,19 @@ export default {
       width: 100%;
       height: 100%;
       background-image: radial-gradient(rgba(255, 255, 255, 0.7), rgba(0, 0, 0, 0.7));
+      .custom-frame-title {
+        font-family: Palatino, Palatino Linotype, Palatino LT STD, Book Antiqua, Georgia,serif;
+        font-weight: 900;
+        font-size: 140%;
+        line-height: 80%;
+        position: absolute;
+        bottom: 14px;
+        text-align: center;
+        width: 100%;
+        opacity: 0.9;
+        color: darken($taskbar-color, 10%);
+        text-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+      }
       .custom-frame-admin-icon {
         position: absolute;
         bottom: 25px;
