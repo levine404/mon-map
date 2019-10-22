@@ -156,7 +156,7 @@ export default {
 
 <style lang="scss">
 .taskbar-color {
-  background: $taskbar-color;
+  background: $primary;
   background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.3));
 }
 .custom-frame {
@@ -189,7 +189,7 @@ export default {
         text-align: center;
         width: 100%;
         opacity: 0.9;
-        color: darken($taskbar-color, 10%);
+        color: darken($primary, 10%);
         text-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
       }
       .custom-frame-admin-icon {
