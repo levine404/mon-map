@@ -7,3 +7,7 @@ export function logUserIn (state, payload) {
 export function logUserOut (state) {
   state.loggedUser = null
 }
+
+export function selectItem (state, payload) {
+  state.itemSelected = payload
+}

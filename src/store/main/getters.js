@@ -5,3 +5,7 @@ export function loggedUser (state) {
 export function items (state) {
   return state.items
 }
+
+export function itemSelected (state) {
+  return state.itemSelected
+}
