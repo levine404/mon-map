@@ -3,7 +3,7 @@ export function loggedUser (state) {
 }
 
 export function items (state) {
-  return state.items
+  return state.items.map((item, index) => ({ ...item, index }))
 }
 
 export function itemSelected (state) {

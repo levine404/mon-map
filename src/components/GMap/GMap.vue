@@ -23,11 +23,21 @@ export default {
     this.geocoder = new this.$gmaps.Geocoder()
     this.infoWindow.addListener('domready', this.addInfoWindowClickListener)
     this.infoWindow.addListener('closeclick', this.removeInfoWindowClickListener)
+    if (this.itemSelected !== null) {
+      this.centerSelectedItem()
+    }
   },
   watch: {
     itemSelected (newVal, oldVal) {
       if (oldVal !== null) {
         this.removeInfoWindowClickListener()
+      }
+    },
+    $route (to, from) {
+      if (to.path === '/') {
+        if (this.itemSelected !== null) {
+          this.centerSelectedItem()
+        }
       }
     }
   },
@@ -152,15 +162,12 @@ export default {
   },
   methods: {
     addInfoWindowClickListener () {
-      console.log('add', this.infoWindow)
       const moreInfoEl = this.$el.querySelector('#more-info')
       if (moreInfoEl) {
-        console.log('moreInfoEl', moreInfoEl)
         moreInfoEl.addEventListener('click', this.moreInfoClickHandler)
       }
     },
     removeInfoWindowClickListener () {
-      console.log('remove')
       const moreInfoEl = this.$el.querySelector('#more-info')
       if (moreInfoEl) {
         moreInfoEl.removeEventListener('click', this.moreInfoClickHandler)
@@ -183,6 +190,12 @@ export default {
         this.$router.push(`/details/${this.items[this.itemSelected].id}`)
       }
       this.infoWindow.close()
+    },
+    centerSelectedItem () {
+      const item = this.items[this.itemSelected]
+      if (item) {
+        this.map.setCenter(item.position)
+      }
     }
   }
 }
