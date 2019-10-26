@@ -3,9 +3,13 @@ export function loggedUser (state) {
 }
 
 export function items (state) {
-  return state.items.map((item, index) => ({ ...item, index }))
+  return state.items
+}
+
+export function itemSelectedId (state) {
+  return state.itemSelectedId
 }
 
 export function itemSelected (state) {
-  return state.itemSelected
+  return state.items.find(item => item.id === state.itemSelectedId)
 }

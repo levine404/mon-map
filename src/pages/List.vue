@@ -4,7 +4,7 @@
 
       <q-item
         v-for="(item, index) in items"
-        :key="item.index"
+        :key="item.id"
       >
 
         <q-item-section side>
@@ -24,7 +24,7 @@
           side
           style="max-width: 60px"
           class="text-center"
-          @click="showOnMap(item.index)"
+          @click="showOnMap(item.id)"
         >
           <q-icon name="map" />
         </q-item-section>
@@ -33,7 +33,7 @@
           side
           style="max-width: 60px"
           class="text-center"
-          @click="editItem(item.index)"
+          @click="editItem(item.id)"
         >
           <q-icon name="edit" />
         </q-item-section>
@@ -65,18 +65,18 @@ export default {
   },
   methods: {
     shortDescription (description) {
-      if (description.length > 50) {
+      if (description && description.length > 50) {
         return description.substring(0, 47) + '...'
       } else {
         return description
       }
     },
-    editItem (itemIndex) {
-      this.$store.commit('selectItem', itemIndex)
+    editItem (itemId) {
+      this.$store.commit('selectItemId', itemId)
       this.$router.push('/edit')
     },
-    showOnMap (itemIndex) {
-      this.$store.commit('selectItem', itemIndex)
+    showOnMap (itemId) {
+      this.$store.commit('selectItemId', itemId)
       this.$router.push('/')
     }
   }

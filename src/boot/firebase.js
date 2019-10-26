@@ -1,4 +1,4 @@
-import * as firebase from 'firebase/app'
+import firebase from 'firebase'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyD699_db_fHyB7bF4Exi4FrZnUyvvcceR0',
@@ -10,6 +10,7 @@ const firebaseConfig = {
   appId: '1:934299174260:web:34fb40dff808b5c0c89821'
 }
 
-export default () => {
+export default ({ Vue }) => {
   firebase.initializeApp(firebaseConfig)
+  Vue.prototype.$database = firebase.firestore()
 }

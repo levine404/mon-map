@@ -13,7 +13,11 @@
       v-model="type"
       :options="types"
       label="Type"
-    />
+    >
+      <template v-slot:append>
+        <img :src="`statics/icons/${type}.png`"/>
+      </template>
+    </q-select>
     <q-input
       v-model="lat"
       type="number"
@@ -29,6 +33,7 @@
       color="primary"
       label="Save"
       class="full-width"
+      @click="save"
     />
   </q-page>
 </template>
@@ -53,7 +58,6 @@ export default {
   },
   watch: {
     $route (to, from) {
-      console.log('to', to, 'from', from)
       if (to.path === '/edit') {
         if (this.$store.getters.itemSelected !== null) {
           this.loadItemSelected()
@@ -63,6 +67,11 @@ export default {
       }
     }
   },
+  computed: {
+    itemSelected () {
+      return this.$store.getters.itemSelected
+    }
+  },
   created () {
     if (this.$store.getters.itemSelected !== null) {
       this.loadItemSelected()
@@ -70,13 +79,12 @@ export default {
   },
   methods: {
     loadItemSelected () {
-      const item = this.$store.getters.items[this.$store.getters.itemSelected]
-      if (item) {
-        this.name = item.name
-        this.description = item.description
-        this.type = item.type
-        this.lat = item.lat
-        this.lng = item.lng
+      if (this.itemSelected) {
+        this.name = this.itemSelected.name
+        this.description = this.itemSelected.description
+        this.type = this.itemSelected.type
+        this.lat = this.itemSelected.position.lat
+        this.lng = this.itemSelected.position.lng
       } else {
         this.reset()
       }
@@ -87,6 +95,9 @@ export default {
       this.type = this.types[0]
       this.lat = 0
       this.lng = 0
+    },
+    save () {
+      this.$store.dispatch('saveItem')
     }
   }
 }

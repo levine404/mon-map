@@ -8,6 +8,11 @@ export function logUserOut (state) {
   state.loggedUser = null
 }
 
-export function selectItem (state, payload) {
-  state.itemSelected = payload
+export function selectItemId (state, payload) {
+  state.itemSelectedId = payload
+}
+
+export function setItems (state, payload) {
+  state.items = payload
+  console.log('setItems', state, payload)
 }

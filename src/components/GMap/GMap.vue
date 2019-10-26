@@ -1,26 +1,27 @@
 <template>
-  <div id="g-map" class="full-height"></div>
+  <div id="g-map" class="full-height" :data-types="types"></div>
 </template>
 
 <script>
+import { groupBy } from 'lodash'
 import variables from '../../css/quasar.variables.scss'
 import MarkerClusterer from '@google/markerclusterer'
 import mapConfig from './map-config'
-import monImage from './mon-image'
-import stuImage from './stu-image'
 export default {
   name: 'GMap',
   data () {
     return {
       map: null,
-      geocoder: null,
+      // geocoder: null,
       infoWindow: new this.$gmaps.InfoWindow({
         content: 'Blank'
-      })
+      }),
+      clusters: {}
     }
   },
   created () {
-    this.geocoder = new this.$gmaps.Geocoder()
+    // this.geocoder = new this.$gmaps.Geocoder()
+
     this.infoWindow.addListener('domready', this.addInfoWindowClickListener)
     this.infoWindow.addListener('closeclick', this.removeInfoWindowClickListener)
     if (this.itemSelected !== null) {
@@ -28,139 +29,116 @@ export default {
     }
   },
   watch: {
-    itemSelected (newVal, oldVal) {
-      if (oldVal !== null) {
-        this.removeInfoWindowClickListener()
-      }
-    },
+    // itemSelected (newVal, oldVal) {
+    //   if (oldVal !== null) {
+    //     this.removeInfoWindowClickListener().splice(0, 1) // = [] //
+    //   }
+    // },
     $route (to, from) {
       if (to.path === '/') {
         if (this.itemSelected !== null) {
           this.centerSelectedItem()
         }
       }
+    },
+    types (newTypes, oldTypes) {
+      for (const type of oldTypes) {
+        if (!newTypes.includes(type)) {
+          if (this.clusters[type]) {
+            this.clusters[type].clearMarkers()
+            this.$delete(this.clusters[type])
+          }
+        }
+      }
+    },
+    groupedItems (news, old) {
+      this.drawMap()
     }
   },
   computed: {
-    items () {
-      return this.$store.getters.items.map((item, originalIndex) => ({ ...item, originalIndex }))
-    },
+    // Get item selected
     itemSelected () {
       return this.$store.getters.itemSelected
     },
-    stuItems () {
-      return this.items
-        .filter(item => item.type === 'stupa')
-        .map((item, index) => ({ ...item, index }))
+    // Group items from db by type
+    groupedItems () {
+      return groupBy(this.$store.getters.items, 'type')
     },
-    monItems () {
-      return this.items
-        .filter(item => item.type === 'monastery')
-        .map((item, index) => ({ ...item, index }))
+    // Calculate types used
+    types () {
+      return Object.keys(this.groupedItems)
     },
-    stuMarkers () {
-      if (this.map) {
-        return this.stuItems.map((item, index) => {
-          const marker = new this.$gmaps.Marker({
-            position: item.position,
-            clickable: true,
-            icon: stuImage,
-            label: {
-              text: item.name,
-              color: variables.itemLabelColor,
-              fontSize: variables.itemLabelSize
-            },
-            animation: this.$gmaps.Animation.bn,
-            click: this.clickHandler
-          })
-          marker.addListener('click', () => {
-            this.clickHandler('stu', item)
-          })
-          return marker
-        })
-      } else {
-        return []
+    // Calculate icons based on each type available
+    markerIcons () {
+      const mi = {}
+      for (const type of this.types) {
+        mi[type] = {
+          url: `statics/icons/${type}.png`,
+          size: this.$gmaps.Size(32, 33),
+          origin: this.$gmaps.Point(0, 0),
+          labelOrigin: {
+            x: 16,
+            y: 42
+          },
+          fillColor: 'white',
+          anchor: this.$gmaps.Point(0, 16)
+        }
       }
-    },
-    monMarkers () {
-      if (this.map) {
-        return this.monItems.map((item, index) => {
-          const marker = new this.$gmaps.Marker({
-            position: item.position,
-            clickable: true,
-            cursor: 'pointer',
-            icon: monImage,
-            label: {
-              text: item.name,
-              color: variables.itemLabelColor,
-              fontSize: variables.itemLabelSize
-            },
-            animation: this.$gmaps.Animation.bn
-          })
-          marker.addListener('click', () => {
-            this.clickHandler('mon', item)
-          })
-          return marker
-        })
-      } else {
-        return []
-      }
-    },
-    clusteredMonMarker () {
-      if (this.map && this.monMarkers.length) {
-        const markerClusterer = new MarkerClusterer(
-          this.map,
-          this.monMarkers,
-          {
-            maxZoom: 12,
-            styles: [{
-              url: require('../../assets/mon-icon.png'),
-              height: 32,
-              width: 31,
-              textColor: 'white'
-            }]
-          }
-        )
-        return markerClusterer
-      } else {
-        return null
-      }
-    },
-    clusteredStuMarker () {
-      if (this.map && this.stuMarkers.length) {
-        const markerClusterer = new MarkerClusterer(
-          this.map,
-          this.stuMarkers,
-          {
-            maxZoom: 12,
-            styles: [{
-              url: require('../../assets/stu-icon.png'),
-              height: 32,
-              width: 31,
-              textColor: 'white'
-            }]
-          }
-        )
-        return markerClusterer
-      } else {
-        return null
-      }
+      return mi
     },
     infoWindowContent () {
-      return 'Hello there ' + this.items[this.itemSelected]
+      return 'Hello there ' + this.itemSelected
     }
   },
   mounted () {
-    this.map = new this.$gmaps.Map(this.$el, mapConfig)
-    // Force rendering of computed items
-    // eslint-disable-next-line no-unused-expressions
-    this.clusteredMonMarker
-    // eslint-disable-next-line no-unused-expressions
-    this.clusteredStuMarker
-    // eslint-disable-next-line no-unused-expressions
-    this.infoWindow
+    this.map = new this.$gmaps.Map(this.$el, mapConfig(this.$gmaps))
+    // this.infoWindow
+    this.drawMap()
   },
   methods: {
+    drawMap () {
+      for (const type of this.types) {
+        if (this.clusters[type]) {
+          this.clusters[type].clearMarkers()
+        }
+        const icon = this.markerIcons[type]
+        const markers = this.groupedItems[type].map(item => {
+          const marker = new this.$gmaps.Marker({
+            position: item.position,
+            clickable: true,
+            icon,
+            label: {
+              text: item.name,
+              color: variables.itemLabelColor,
+              fontSize: variables.itemLabelSize
+            }
+          })
+          marker.id = item.id
+          this.$gmaps.event.addListener(marker, 'click', () => {
+            this.clickHandler(item)
+          })
+          return marker
+        })
+        const markerClusterer = new MarkerClusterer(
+          this.map,
+          markers,
+          {
+            maxZoom: 12,
+            styles: [{
+              url: `statics/icons/${type}.png`,
+              height: 32,
+              width: 31,
+              textColor: 'white'
+            }]
+          }
+        )
+        if (!this.clusters[type]) {
+          this.$set(this.clusters, type, markerClusterer)
+        } else {
+          this.clusters[type] = markerClusterer
+        }
+      }
+    },
     addInfoWindowClickListener () {
       const moreInfoEl = this.$el.querySelector('#more-info')
       if (moreInfoEl) {
@@ -173,28 +151,40 @@ export default {
         moreInfoEl.removeEventListener('click', this.moreInfoClickHandler)
       }
     },
-    clickHandler (itemType, item) {
-      if (this.itemSelected === item.originalIndex) {
-        this.$store.commit('selectItem', null)
+    clickHandler (item) {
+      if (this.itemSelected === item.id) {
+        this.$store.commit('selectItemId', null)
         this.removeInfoWindowClickListener()
         this.infoWindow.close()
       } else {
-        this.$store.commit('selectItem', item.originalIndex)
+        this.$store.commit('selectItemId', item.id)
         const newInfoWindowContent = `<div>${item.name}<span id="more-info">More Info</span><q-btn label="MORE"></q-btn></div>`
         this.infoWindow.setContent(newInfoWindowContent)
-        this.infoWindow.open(this.map, this[itemType + 'Markers'][item.index])
+        const cluster = this.clusters[item.type]
+        if (cluster) {
+          const clusterMarkers = cluster.getMarkers()
+          const marker = clusterMarkers.find(marker => marker.id === item.id)
+          if (marker) {
+            this.infoWindow.open(this.map, marker)
+          } else {
+            this.infoWindow.setPosition({
+              lat: item.position.lat + 0.005,
+              lng: item.position.lng
+            })
+            this.infoWindow.open(this.map)
+          }
+        }
       }
     },
     moreInfoClickHandler () {
       if (this.itemSelected !== null) {
-        this.$router.push(`/details/${this.items[this.itemSelected].id}`)
+        this.$router.push(`/details/${this.$store.getters.itemSelectedId}`)
       }
       this.infoWindow.close()
     },
     centerSelectedItem () {
-      const item = this.items[this.itemSelected]
-      if (item) {
-        this.map.setCenter(item.position)
+      if (this.map && this.itemSelected && this.itemSelected.position) {
+        this.map.setCenter(this.itemSelected.position)
       }
     }
   }

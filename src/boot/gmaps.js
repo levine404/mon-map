@@ -26,7 +26,9 @@ export default async ({ Vue }) => {
       window[CALLBACK_NAME] = () => _resolve()
       loadScript(_reject)
       await promise
-      Vue.prototype.$gmaps = window.google.maps
+      Vue.prototype.$gmaps = window.google
+        ? window.google.maps
+        : {}
     } catch (err) {
       console.error(err)
     }
