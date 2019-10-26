@@ -1,3 +1,5 @@
+import firebase from 'firebase'
+
 export async function getItems ({ commit }, payload) {
   try {
     const snapshot = await this._vm.$database.collection('items').get()
@@ -29,4 +31,8 @@ export async function saveItem ({ dispatch }, payload) {
     console.error(err)
   }
   return refId
+}
+
+export async function logout () {
+  firebase.auth().signOut()
 }

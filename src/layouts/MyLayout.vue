@@ -28,6 +28,7 @@
                 <div
                   v-if="loggedUser"
                   class="custom-frame-admin-icon"
+                  @click="logoutDialogOpen = true"
                 >
                   <q-icon name="security" />
                 </div>
@@ -110,6 +111,33 @@
 
     </q-dialog>
 
+    <q-dialog
+      v-model="logoutDialogOpen"
+      persistent
+    >
+      <q-card>
+        <q-card-section class="row items-center">
+          Logout
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            label="Cancel"
+            color="primary"
+            v-close-popup
+          />
+          <q-btn
+            flat
+            label="Logout"
+            color="primary"
+            v-close-popup
+            @click="$store.dispatch('logout')"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
   </q-layout>
 </template>
 
@@ -121,7 +149,8 @@ export default {
     return {
       loginPressTimes: 0,
       lastPress: 0,
-      loginDialogOpen: false
+      loginDialogOpen: false,
+      logoutDialogOpen: false
     }
   },
   computed: {
@@ -143,9 +172,9 @@ export default {
     facebookLogin () {
       const provider = new firebase.auth.FacebookAuthProvider()
       firebase.auth().signInWithPopup(provider)
-        .then((result) => {
-          this.$store.commit('logUserIn', result.user)
-        })
+        // .then((result) => {
+        //   this.$store.commit('logUserIn', result.user)
+        // })
         .catch((err) => {
           console.error(err)
         })
