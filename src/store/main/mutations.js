@@ -14,5 +14,4 @@ export function selectItemId (state, payload) {
 
 export function setItems (state, payload) {
   state.items = payload
-  console.log('setItems', state, payload)
 }

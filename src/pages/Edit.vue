@@ -33,6 +33,7 @@
       color="primary"
       label="Save"
       class="full-width"
+      :loading="saving"
       @click="save"
     />
   </q-page>
@@ -48,6 +49,7 @@ export default {
   name: 'Edit',
   data () {
     return {
+      saving: false,
       types,
       name: '',
       description: '',
@@ -81,7 +83,7 @@ export default {
     loadItemSelected () {
       if (this.itemSelected) {
         this.name = this.itemSelected.name
-        this.description = this.itemSelected.description
+        this.description = this.itemSelected.description || ''
         this.type = this.itemSelected.type
         this.lat = this.itemSelected.position.lat
         this.lng = this.itemSelected.position.lng
@@ -96,8 +98,29 @@ export default {
       this.lat = 0
       this.lng = 0
     },
-    save () {
-      this.$store.dispatch('saveItem')
+    async save () {
+      try {
+        this.saving = true
+        const payload = {
+          name: this.name,
+          type: this.type,
+          description: this.description || '',
+          position: {
+            lat: Number(this.lat),
+            lng: Number(this.lng)
+          }
+        }
+        if (this.itemSelected) {
+          payload.id = this.itemSelected.id
+        }
+        const refId = await this.$store.dispatch('saveItem', payload)
+        if (!this.itemSelected) {
+          this.$store.commit('selectItemId', refId)
+        }
+      } catch (err) {
+        console.error(err)
+      }
+      this.saving = false
     }
   }
 }
