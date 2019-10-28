@@ -12,7 +12,13 @@
         </q-item-section>
 
         <q-item-section top thumbnail class="q-ml-none">
-          <img src="https://cdn.quasar.dev/img/mountains.jpg">
+          <q-img
+            :ref="`img::${item.id}`"
+            :src="mainImageUrl(item.id) && mainImageUrls[item.id]"
+            contain
+            position="center center"
+            style="height: 80px; width: 100px"
+          />
         </q-item-section>
 
         <q-item-section>
@@ -56,8 +62,24 @@
 </template>
 
 <script>
+import firebase from 'firebase'
+const DEFAULT_IMAGE = 'https://cdn.quasar.dev/img/mountains.jpg'
 export default {
   name: 'List',
+  data () {
+    return {
+      mainImageUrls: {}
+    }
+  },
+  watch: {
+    items (newVal) {
+      newVal.forEach(item => {
+        if (!this.mainImageUrls[item.id]) {
+          this.$set(this.mainImageUrls, item.id, DEFAULT_IMAGE)
+        }
+      })
+    }
+  },
   computed: {
     items () {
       return this.$store.getters.items
@@ -78,6 +100,17 @@ export default {
     showOnMap (itemId) {
       this.$store.commit('selectItemId', itemId)
       this.$router.push('/')
+    },
+    async mainImageUrl (itemId) {
+      const storageRef = firebase.storage().ref()
+      try {
+        const url = await storageRef.child(`main/${itemId}.jpg`).getDownloadURL()
+        if (url) {
+          this.mainImageUrls[itemId] = url
+        }
+      } catch (err) {
+        console.error(err)
+      }
     }
   }
 }

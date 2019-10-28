@@ -5,6 +5,11 @@
       label="Name"
     />
     <q-input
+      label="Main Image (jpg)"
+      type="file"
+      @input="value => { mainFile = value[0] }"
+    />
+    <q-input
       v-model="description"
       label="Description"
       type="textarea"
@@ -55,7 +60,8 @@ export default {
       description: '',
       type: types[0],
       lat: 0,
-      lng: 0
+      lng: 0,
+      mainFile: null
     }
   },
   watch: {
@@ -117,10 +123,19 @@ export default {
         if (!this.itemSelected) {
           this.$store.commit('selectItemId', refId)
         }
+        await this.uploadMainFile()
       } catch (err) {
         console.error(err)
       }
       this.saving = false
+    },
+    async uploadMainFile () {
+      if (this.itemSelected && this.itemSelected.id && this.mainFile) {
+        await this.$store.dispatch('uploadImage', {
+          path: `main/${this.itemSelected.id}.jpg`,
+          file: this.mainFile
+        })
+      }
     }
   }
 }
