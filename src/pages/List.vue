@@ -18,12 +18,15 @@
             contain
             position="center center"
             style="height: 80px; width: 100px"
+            @click="$router.push(`/details/${item.id}`)"
           />
         </q-item-section>
 
         <q-item-section>
-          <q-item-label>{{ item.name }}</q-item-label>
-          <q-item-label caption>{{ shortDescription(item.description) }}</q-item-label>
+          <div @click="$router.push(`/details/${item.id}`)">
+            <q-item-label>{{ item.name }}</q-item-label>
+            <q-item-label caption>{{ shortDescription(item.description) }}</q-item-label>
+          </div>
         </q-item-section>
 
         <q-item-section
