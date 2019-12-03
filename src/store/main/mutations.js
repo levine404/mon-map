@@ -15,3 +15,12 @@ export function selectItemId (state, payload) {
 export function setItems (state, payload) {
   state.items = payload
 }
+
+export function setMainImageUrl (state, payload) {
+  const { itemId, url } = payload
+  if (!state.mainImageUrls[itemId]) {
+    this._vm.$set(state.mainImageUrls, itemId, url)
+  } else {
+    state.mainImageUrls[itemId] = url
+  }
+}

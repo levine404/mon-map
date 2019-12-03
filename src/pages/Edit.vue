@@ -11,7 +11,7 @@
     />
     <q-input
       v-model="description"
-      label="Description"
+      label="Short Description"
       type="textarea"
     />
     <q-select
@@ -33,6 +33,37 @@
       type="number"
       label="Longitude"
     />
+    <q-input
+      v-model="location"
+      label="Location Name"
+    />
+    <q-input
+      v-model="about"
+      label="About"
+      type="textarea"
+    />
+    <q-input
+      v-model="history"
+      label="History"
+      type="textarea"
+    />
+    <q-input
+      v-model="email"
+      label="Email Contact"
+    />
+    <q-input
+      v-model="phone"
+      label="Phone Contact"
+    />
+    <q-input
+      v-model="website"
+      label="Website"
+    />
+    <q-input
+      v-model="addressDescription"
+      label="Address Description"
+    />
+    <br />
     <q-btn
       flat
       color="primary"
@@ -41,6 +72,18 @@
       :loading="saving"
       @click="save"
     />
+    <br />
+    <br />
+    <q-btn
+      v-if="itemSelected"
+      color="negative"
+      label="Delete"
+      class="full-width"
+      :loading="deleting"
+      @click="deleteItem"
+    />
+    <br />
+    <br />
   </q-page>
 </template>
 
@@ -55,13 +98,21 @@ export default {
   data () {
     return {
       saving: false,
+      deleting: false,
       types,
       name: '',
       description: '',
       type: types[0],
       lat: 0,
       lng: 0,
-      mainFile: null
+      location: '',
+      mainFile: null,
+      about: '',
+      history: '',
+      email: '',
+      website: '',
+      phone: '',
+      addressDescription: ''
     }
   },
   watch: {
@@ -93,6 +144,13 @@ export default {
         this.type = this.itemSelected.type
         this.lat = this.itemSelected.position.lat
         this.lng = this.itemSelected.position.lng
+        this.location = this.itemSelected.location
+        this.about = this.itemSelected.about
+        this.history = this.itemSelected.history
+        this.email = this.itemSelected.email
+        this.website = this.itemSelected.website
+        this.phone = this.phone
+        this.addressDescription = this.itemSelected.addressDescription
       } else {
         this.reset()
       }
@@ -103,6 +161,23 @@ export default {
       this.type = this.types[0]
       this.lat = 0
       this.lng = 0
+      this.location = ''
+      this.about = ''
+      this.history = ''
+      this.email = ''
+      this.website = ''
+      this.phone = ''
+      this.addressDescription = ''
+    },
+    async deleteItem () {
+      try {
+        this.deleting = true
+        await this.$store.dispatch('deleteItem', this.itemSelected.id)
+        this.$router.push('/list')
+      } catch (err) {
+        console.error(err)
+      }
+      this.deleting = false
     },
     async save () {
       try {
@@ -114,7 +189,14 @@ export default {
           position: {
             lat: Number(this.lat),
             lng: Number(this.lng)
-          }
+          },
+          location: this.location,
+          about: this.about,
+          history: this.history,
+          email: this.email,
+          website: this.website,
+          phone: this.phone,
+          addressDescription: this.addressDescription
         }
         if (this.itemSelected) {
           payload.id = this.itemSelected.id

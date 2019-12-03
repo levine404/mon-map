@@ -1,15 +1,16 @@
 {
   "name": "mon-map",
   "version": "0.0.1",
-  "description": "Monastery Map",
-  "productName": "Quasar App",
+  "description": "Monastery Mapper",
+  "productName": "Monastery Mapper",
   "cordovaId": "org.cordova.quasar.app",
   "capacitorId": "",
   "author": "Justin Levine <levine404@gmail.com>",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "deploy": "quasar build && firebase deploy"
   },
   "dependencies": {
     "@google/markerclusterer": "^1.0.3",

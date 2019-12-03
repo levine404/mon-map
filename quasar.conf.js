@@ -45,7 +45,9 @@ module.exports = function (ctx) {
 
       components: [
         'QItemLabel',
-        'QItemSection'
+        'QItemSection',
+        'QTabPanels',
+        'QTabPanel'
       ],
       directives: [],
 

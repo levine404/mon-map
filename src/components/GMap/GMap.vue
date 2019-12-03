@@ -16,7 +16,8 @@ export default {
       infoWindow: new this.$gmaps.InfoWindow({
         content: 'Blank'
       }),
-      clusters: {}
+      clusters: {},
+      defaultImage: 'https://cdn.quasar.dev/img/mountains.jpg'
     }
   },
   created () {
@@ -158,7 +159,20 @@ export default {
         this.infoWindow.close()
       } else {
         this.$store.commit('selectItemId', item.id)
-        const newInfoWindowContent = `<div>${item.name}<span id="more-info">More Info</span><q-btn label="MORE"></q-btn></div>`
+        const newInfoWindowContent = `
+          <div
+            class="text-center"
+            id="more-info"
+          >
+            <div class="more-info-name">${item.name || ''}</div>
+            <div class="more-info-location">${item.location || ''}</div>
+            <div
+              class="more-info-img"
+              style="background-image: url('${this.$store.getters.mainImageUrl(item.id) || this.defaultImage}')"
+            ></div>
+            <div class="more-info">VIEW DETAILS</div>
+          </div>
+        `
         this.infoWindow.setContent(newInfoWindowContent)
         const cluster = this.clusters[item.type]
         if (cluster) {
@@ -190,3 +204,23 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.more-info-name {
+  font-size: 2.5vh;
+  padding: 2px;
+}
+.more-info-location {
+  padding: 2px;
+}
+.more-info-img {
+  width: 160px;
+  height: 80px;
+  background-position: top center;
+  background-size: cover;
+}
+.more-info {
+  padding: 8px;
+  color: green;
+}
+</style>

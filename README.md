@@ -1,8 +1,9 @@
 # Quasar App (mon-map)
 
-Monastery Map
+Monastery Mapper
 
 ## Install the dependencies
+Ensure Node is installed on your machine
 ```bash
 npm install
 ```
@@ -20,6 +21,11 @@ npm run lint
 ### Build the app for production
 ```bash
 quasar build
+```
+
+### Deploy the app
+```bash
+npm run deploy
 ```
 
 ### Customize the configuration

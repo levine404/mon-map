@@ -33,6 +33,22 @@ export async function saveItem ({ dispatch }, payload) {
   return refId
 }
 
+export async function deleteItem ({ dispatch, commit }, payload) {
+  if (payload) {
+    console.log('@deleteItem', payload)
+    try {
+      await this._vm.$database
+        .collection('items')
+        .doc(payload)
+        .delete()
+      dispatch('getItems')
+      commit('selectItemId', null)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+}
+
 export async function logout () {
   firebase.auth().signOut()
 }
@@ -80,4 +96,27 @@ export async function uploadImage (context, payload) {
       })
     })
   })
+}
+
+export async function getMainImageUrl ({ commit }, payload) {
+  const storageRef = firebase.storage().ref()
+  try {
+    const url = await storageRef.child(`main/${payload}.jpg`).getDownloadURL()
+    if (url) {
+      commit('setMainImageUrl', {
+        itemId: payload,
+        url
+      })
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export async function getAllMainImageUrls ({ state, dispatch }) {
+  for (const item of state.items) {
+    if (!state.mainImageUrls[item.id]) {
+      dispatch('getMainImageUrl', item.id)
+    }
+  }
 }

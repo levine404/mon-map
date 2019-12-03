@@ -1,7 +1,8 @@
-import mockData from '../../test/mock/mock-data'
+// import mockData from '../../test/mock/mock-data'
 
 export default {
   loggedUser: null,
-  items: mockData,
-  itemSelectedId: null
+  items: [], // mockData,
+  itemSelectedId: null,
+  mainImageUrls: {}
 }
