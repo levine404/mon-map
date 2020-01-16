@@ -28,5 +28,11 @@ quasar build
 npm run deploy
 ```
 
+### Adding User Access
+1) Login with FB
+2) In Firebase console add authenticated user's UID to the Firebase Database collection called 'admins',
+the document should have a property called 'isAdmin' and it should be set to true
+
 ### Customize the configuration
 See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
+
